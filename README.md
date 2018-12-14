@@ -1,5 +1,4 @@
-Kubernetes prometheus
-=========
+# Kubernetes prometheus
 
 This role installs the [prometheus operator](https://github.com/coreos/prometheus-operator) of the core os team.
 It also installs a prometheus cluster to monitor the kubernetes cluster.

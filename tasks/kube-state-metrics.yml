@@ -1,0 +1,17 @@
+- name: Create kube-state-metrics directory
+  file: path=kubernetes/kube-state-metrics state=directory mode=0755
+
+- name: prepare kube-state-metrics
+  copy:
+    src: kube-state-metrics
+    dest: kubernetes
+
+- name: prepare kube-state-metrics templates
+  template:
+    src: "{{ item }}"
+    dest: kubernetes/kube-state-metrics/{{ item | basename | regex_replace('\.j2','') }}
+  with_fileglob:
+    - ../templates/kube-state-metrics/*.j2
+
+- name: Deploy kube-state-metrics
+  command: "kubectl apply -f kubernetes/kube-state-metrics -n {{ cluster_namespace }}"

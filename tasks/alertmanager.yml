@@ -1,0 +1,12 @@
+- name: Create alertmanager directory
+  file: path=kubernetes/alertmanager state=directory mode=0755
+
+- name: prepare alertmanager templates
+  template:
+    src: "{{ item }}"
+    dest: kubernetes/alertmanager/{{ item | basename | regex_replace('\.j2','') }}
+  with_fileglob:
+    - ../templates/alertmanager/*.j2
+
+- name: Deploy alertmanager
+  command: "kubectl apply -f kubernetes/alertmanager -n {{ cluster_namespace }}"

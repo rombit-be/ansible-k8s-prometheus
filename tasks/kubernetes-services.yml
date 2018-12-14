@@ -1,0 +1,10 @@
+- name: Create kubernetes-services directory
+  file: path=kubernetes/kubernetes-services state=directory mode=0755
+
+- name: prepare kubernetes-services
+  copy:
+    src: kubernetes-services
+    dest: kubernetes
+
+- name: Deploy kubernetes-services
+  command: "kubectl apply -f kubernetes/kubernetes-services -n kube-system"

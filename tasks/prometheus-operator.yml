@@ -1,0 +1,39 @@
+- name: Create prometheus-operator directory
+  file: path=kubernetes/prometheus-operator state=directory mode=0755
+
+- name: prepare prometheus-operator
+  copy:
+    src: prometheus-operator
+    dest: kubernetes
+
+- name: prepare prometheus-operator templates
+  template:
+    src: "{{ item }}"
+    dest: kubernetes/prometheus-operator/{{ item | basename | regex_replace('\.j2','') }}
+  with_fileglob:
+    - ../templates/prometheus-operator/*.j2
+
+- name: Deploy prometheus-operator
+  command: kubectl apply -f kubernetes/prometheus-operator -n {{ cluster_namespace }}
+
+- name: Wait until service monitor is available
+  command: kubectl get servicemonitor -n {{ cluster_namespace }}
+  register: servicemonitor_result
+  until: servicemonitor_result.rc == 0
+  retries: 10
+  delay: 10
+  ignore_errors: yes
+
+- name: Wait until service monitor is available
+  command: kubectl get prometheus -n {{ cluster_namespace }}
+  register: prometheus_result
+  until: prometheus_result.rc == 0
+  retries: 10
+  delay: 10
+
+- name: Wait until service monitor is available
+  command: kubectl get alertmanager -n {{ cluster_namespace }}
+  register: alertmanager_result
+  until: alertmanager_result.rc == 0
+  retries: 10
+  delay: 10

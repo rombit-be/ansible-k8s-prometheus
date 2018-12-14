@@ -1,0 +1,21 @@
+- name: Create prometheus2 directory
+  file: path=kubernetes/prometheus2 state=directory mode=0755
+
+- name: prepare prometheus2
+  copy:
+    src: prometheus2
+    dest: kubernetes
+
+- name: remove prod rules if not in prod
+  file: path=kubernetes/prometheus2/prometheus2-rules-prod.yml state=absent
+  when: not prometheus_production_rules_enabled
+
+- name: prepare prometheus2 templates
+  template:
+    src: "{{ item }}"
+    dest: kubernetes/prometheus2/{{ item | basename | regex_replace('\.j2','') }}
+  with_fileglob:
+    - ../templates/prometheus2/*.j2
+
+- name: Deploy prometheus2
+  command: "kubectl apply -f kubernetes/prometheus2 -n {{ cluster_namespace }}"

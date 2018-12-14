@@ -1,0 +1,10 @@
+- name: Create node-exporter directory
+  file: path=kubernetes/node-exporter state=directory mode=0755
+
+- name: prepare node-exporter
+  copy:
+    src: node-exporter
+    dest: kubernetes
+
+- name: Deploy node-exporter
+  command: "kubectl apply -f kubernetes/node-exporter -n {{ cluster_namespace }}"

@@ -1,0 +1,43 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus2
+  labels:
+    app: prometheus2
+spec:
+  replicas: 2
+{% if external_url_used|bool %}
+  externalUrl: "{{ external_url_prometheus2 }}"
+  routePrefix: /
+{% endif %}
+  version: v2.3.2
+  serviceAccountName: prometheus2
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector:
+    matchLabels:
+      prometheus-cluster: prometheus2
+  ruleNamespaceSelector: {}
+  ruleSelector:
+    matchLabels:
+      role: prometheus-rulefiles
+      prometheus: prometheus2
+  resources:
+    requests:
+      cpu: "{{ prometheus2_cpu }}"
+      memory: "{{ prometheus2_memory }}"
+    limits:
+      cpu: "{{ prometheus2_cpu_limit }}"
+      memory: "{{ prometheus2_memory_limit }}"
+  retention: "{{ prometheus2_retention }}"
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: {{ prometheus_storage_class }}
+        resources:
+          requests:
+            storage: {{ prometheus2_storage }}
+  alerting:
+    alertmanagers:
+    - namespace: {{ cluster_namespace }}
+      name: alertmanager-main
+      port: web

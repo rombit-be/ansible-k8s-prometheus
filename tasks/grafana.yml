@@ -1,0 +1,44 @@
+- name: Create grafana directory
+  file: path=kubernetes/grafana state=directory mode=0755
+
+- name: Create grafana-dashboards directory
+  file: path=kubernetes/grafana-dashboards state=directory mode=0755
+
+- name: prepare grafana
+  copy:
+    src: grafana
+    dest: kubernetes
+
+- name: prepare grafana dashboards
+  copy:
+    src: grafana-dashboards
+    dest: kubernetes
+  when: not grafana_use_postgresql|bool
+
+- name: prepare grafana templates
+  template:
+    src: "{{ item }}"
+    dest: kubernetes/grafana/{{ item | basename | regex_replace('\.j2','') }}
+  with_fileglob:
+    - ../templates/grafana/*.j2
+
+- name: Delete previous grafana configmap
+  command: >
+    kubectl delete configmap grafana-dashboards
+    -n {{ cluster_namespace }}
+  ignore_errors: true
+
+- name: Create grafana configmap
+  command: >
+    kubectl create configmap grafana-dashboards
+    --from-file=kubernetes/grafana-dashboards/all-nodes-dashboard.json
+    --from-file=kubernetes/grafana-dashboards/deployment-dashboard.json
+    --from-file=kubernetes/grafana-dashboards/kubernetes-pods-dashboard.json
+    --from-file=kubernetes/grafana-dashboards/node-dashboard.json
+    --from-file=kubernetes/grafana-dashboards/resource-requests-dashboard.json
+    --from-file=kubernetes/grafana-dashboards/prometheus-datasource.json
+    -n {{ cluster_namespace }}
+  when: not grafana_use_postgresql|bool
+
+- name: Deploy grafana
+  command: "kubectl apply -f kubernetes/grafana -n {{ cluster_namespace }}"

@@ -1,0 +1,20 @@
+apiVersion: "monitoring.coreos.com/v1"
+kind: "Alertmanager"
+metadata:
+  name: "main"
+  labels:
+    alertmanager: "main"
+spec:
+  replicas: 3
+{% if external_url_used|bool %}
+  externalUrl: "{{ external_url_alertmanager }}"
+  routePrefix: /
+{% endif %}
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "100Mi"
+    limits:
+      cpu: "100m"
+      memory: "150Mi"
+  version: v0.14.0

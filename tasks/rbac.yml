@@ -1,0 +1,12 @@
+- name: Create rbac directory
+  file: path=kubernetes/rbac state=directory mode=0755
+
+- name: prepare rbac templates
+  template:
+    src: "{{ item }}"
+    dest: kubernetes/rbac/{{ item | basename | regex_replace('\.j2','') }}
+  with_fileglob:
+    - ../templates/rbac/*.j2
+
+- name: Deploy prometheus
+  command: "kubectl apply -f kubernetes/rbac"

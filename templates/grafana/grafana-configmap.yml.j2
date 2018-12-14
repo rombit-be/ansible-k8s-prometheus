@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+data:
+  GF_AUTH_ANONYMOUS_ENABLED: "true"
+  GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+{% if external_url_used|bool %}
+  GF_SERVER_ROOT_URL: "{{ external_url_grafana }}"
+  GF_SERVER_DOMAIN: "{{ external_domain_grafana }}"
+{% endif %}
+{% if grafana_use_postgresql|bool %}
+  GF_DATABASE_TYPE: postgres
+  GF_DATABASE_HOST: {{ grafana_db_host }}
+  GF_DATABASE_NAME: {{ grafana_db_name }}
+  GF_DATABASE_USER: {{ grafana_db_user }}
+{% endif %}

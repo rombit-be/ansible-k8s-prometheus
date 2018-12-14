@@ -1,0 +1,38 @@
+---
+# defaults file for ansible-k8s-prometheus
+cluster_context: minikube
+cluster_namespace: test
+prometheus_cpu: 2
+prometheus_cpu_limit: 2
+prometheus_memory: 3.5Gi
+prometheus_memory_limit: 4Gi
+prometheus_storage: 20Gi
+prometheus_retention: 240h
+
+prometheus2_cpu: 2
+prometheus2_cpu_limit: 2
+prometheus2_memory: 3.5Gi
+prometheus2_memory_limit: 4Gi
+prometheus2_storage: 20Gi
+prometheus2_retention: 240h
+
+prometheus_storage_class: gp2
+
+external_url_used: false
+
+alertmanager_config_location: alertmanagerconfig.yaml
+
+alertmanagerconfig:
+  global:
+    resolve_timeout: 5m
+  route:
+    group_by: ['job']
+    group_wait: 30s
+    group_interval: 5m
+    repeat_interval: 12h
+    receiver: 'slack_test'
+  receivers:
+  - name: slack_test
+    slack_configs:
+    - api_url: "https://hooks.slack.com/services/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"
+      channel: "#prometheus-webhook"

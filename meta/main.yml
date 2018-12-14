@@ -1,0 +1,7 @@
+galaxy_info:
+  author: Stijn De Haes <devops@rombit.be>
+  description: Prometheus operator for Kubernetes
+  company: https://rombit.be
+  min_ansible_version: 1.2
+  galaxy_tags: []
+dependencies: []

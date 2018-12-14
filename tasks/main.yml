@@ -1,0 +1,38 @@
+---
+- name: Create template directory
+  file: path=kubernetes state=directory mode=0755
+
+- name: Use the correct cluster context
+  command: "kubectl config use-context {{ cluster_context }}"
+
+- name: Deploy prometheus-operator
+  include: prometheus-operator.yml
+  tags: prometheus-operator
+
+- name: Deploy kubernetes services
+  include: kubernetes-services.yml
+  tags: kubernetes-services
+
+- name: Deploy grafana
+  include: grafana.yml
+  tags: grafana
+
+- name: Deploy kube-state-metrics
+  include: kube-state-metrics.yml
+  tags: kube-state-metrics
+
+- name: Deploy node-exporter
+  include: node-exporter.yml
+  tags: node-exporter
+
+- name: Deploy prometheus2
+  include: prometheus2.yml
+  tags: prometheus2
+
+- name: Deploy alertmanager
+  include: alertmanager.yml
+  tags: alertmanager
+
+- name: Add rbac rules
+  include: rbac.yml
+  tags: rbac

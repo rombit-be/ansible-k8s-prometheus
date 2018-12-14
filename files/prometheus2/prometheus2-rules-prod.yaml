@@ -1,0 +1,31 @@
+apiVersion:  monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: prometheus2-rules
+  labels:
+    role: prometheus-rulefiles
+    prometheus: prometheus2
+spec:
+  groups:
+  - name: kube-state-metrics.rules
+    rules:
+    - alert: DeploymentReplicasNotUpdated
+      expr: ((kube_deployment_status_replicas_updated != kube_deployment_spec_replicas)
+        or (kube_deployment_status_replicas_available != kube_deployment_spec_replicas))
+        unless (kube_deployment_spec_paused == 1)
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        description: Replicas are not updated and available for deployment {{$labels.namespace}}/{{$labels.deployment}}
+        summary: Deployment replicas are outdated
+
+    - alert: PodFrequentlyRestarting
+      expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        description: Pod {{$labels.namespace}}/{{$labels.pod}} was restarted {{$value}}
+          times within the last hour
+        summary: Pod is restarting frequently

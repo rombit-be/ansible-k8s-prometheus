@@ -31,7 +31,7 @@ spec:
             memory: 600Mi
           requests:
             cpu: 100m
-            memory: 100Mi
+            memory: 200Mi
       nodeSelector:
         beta.kubernetes.io/os: linux
       securityContext:

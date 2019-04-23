@@ -9,7 +9,7 @@ prometheus_memory_limit: 4Gi
 prometheus_storage: 20Gi
 prometheus_retention: 240h
 
-prometheus2_cpu: 2
+prometheus2_cpu: 1.5
 prometheus2_cpu_limit: 2
 prometheus2_memory: 3.5Gi
 prometheus2_memory_limit: 4Gi

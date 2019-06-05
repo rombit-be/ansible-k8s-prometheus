@@ -6,6 +6,10 @@ metadata:
     app: prometheus2
 spec:
   replicas: 2
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: false
+    runAsUser: 1000
 {% if external_url_used|bool %}
   externalUrl: "{{ external_url_prometheus2 }}"
   routePrefix: /

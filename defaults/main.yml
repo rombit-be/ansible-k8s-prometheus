@@ -34,5 +34,5 @@ alertmanagerconfig:
   receivers:
   - name: slack_test
     slack_configs:
-    - api_url: "https://hooks.slack.com/services/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"
+    - api_url: "<webhook>"
       channel: "#prometheus-webhook"
